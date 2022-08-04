@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:14.4
+    container_name: nestcafe-postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+    expose:
+      - "5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - nestcafe
+  keycloak:
+    image: quay.io/keycloak/keycloak:19.0.1
+    container_name: nestcafe-keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin123
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://nestcafe-postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak123
+      KC_PROXY: edge
+      KC_HOSTNAME: keycloak.localhost
+      KC_HOSTNAME_ADMIN: keycloak.localhost
+    depends_on:
+      - postgres
+    expose:
+      - "8080"
+    command: start-dev
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.keycloak.entrypoints: web
+      traefik.http.routers.keycloak.tls: "false"
+      traefik.http.routers.keycloak.service: keycloak
+      traefik.http.services.keycloak.loadbalancer.server.port: 8080
+      traefik.http.routers.keycloak.rule: Host(`keycloak.localhost`)
+    networks:
+      - nestcafe
+  traefik:
+    container_name: traefik
+    image: traefik:v2.8.1
+    hostname: "traefik"
+    environment:
+      TZ: Europe/Paris
+    ports:
+      - "80:80"
+    volumes:
+      - "$PWD/.docker/traefik.yml:/etc/traefik/traefik.yml:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.traefik.entrypoints: web
+      traefik.http.routers.traefik.service: api@internal
+      traefik.http.routers.traefik.tls: "false"
+      traefik.http.routers.traefik.rule: Host(`traefik.localhost`)
+    networks:
+      - nestcafe
+
+volumes:
+  postgres-data:
+
+networks:
+  nestcafe:
+    name: nestcafenet
