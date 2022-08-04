@@ -6,6 +6,8 @@ services:
       POSTGRES_PASSWORD: postgres
     expose:
       - "5432"
+    ports:
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
@@ -47,6 +49,7 @@ services:
       - "80:80"
     volumes:
       - "$PWD/.docker/traefik.yml:/etc/traefik/traefik.yml:ro"
+      - "$PWD/.docker/dynamic.yml:/etc/traefik/dynamic.yml:ro"
       - "/var/run/docker.sock:/var/run/docker.sock"
     labels:
       traefik.enable: "true"
@@ -54,6 +57,8 @@ services:
       traefik.http.routers.traefik.service: api@internal
       traefik.http.routers.traefik.tls: "false"
       traefik.http.routers.traefik.rule: Host(`traefik.localhost`)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - nestcafe
 

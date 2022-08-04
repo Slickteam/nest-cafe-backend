@@ -1,0 +1,21 @@
+http:
+  routers:
+    backend:
+      entryPoints:
+        - "web"
+      rule: "Host(`api.localhost`)"
+      service: "backend"
+    frontend:
+      entryPoints:
+        - "web"
+      rule: "Host(`app.localhost`)"
+      service: "frontend"
+  services:
+    backend:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:3000"
+    frontend:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:8080"

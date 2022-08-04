@@ -4,6 +4,11 @@
 providers:
   docker:
     defaultRule: "Host(`{{ trimPrefix `/` .Name }}.localhost`)"
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+  file:
+    filename: "/etc/traefik/dynamic.yml"
+    watch: true
 
 # API and dashboard configuration
 api:
@@ -13,8 +18,3 @@ api:
 entryPoints:
   web:
     address: ":80"
-
-providers:
-  docker:
-    endpoint: "unix:///var/run/docker.sock"
-    exposedByDefault: false
