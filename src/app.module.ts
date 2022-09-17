@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import {
@@ -6,6 +7,8 @@ import {
   ResourceGuard,
   RoleGuard,
   AuthGuard,
+  PolicyEnforcementMode,
+  TokenValidation,
 } from 'nest-keycloak-connect';
 import { APP_GUARD } from '@nestjs/core';
 import { UserController } from './user/user.controller';
@@ -13,11 +16,14 @@ import { UserService } from './user/user.service';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     KeycloakConnectModule.register({
       authServerUrl: process.env.KEYCLOAK_URL,
       realm: process.env.KEYCLOAK_REALM,
       clientId: process.env.KEYCLOAK_CLIENT_ID,
       secret: process.env.KEYCLOAK_CLIENT_SECRET,
+      policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
+      tokenValidation: TokenValidation.ONLINE,
     }),
   ],
   controllers: [AppController, UserController],

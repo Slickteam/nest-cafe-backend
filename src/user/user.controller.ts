@@ -13,19 +13,18 @@ export class UserController {
   }
 
   @Get('/user')
-  @Roles({ roles: ['USER'] })
+  @Roles({ roles: ['realm:USER'] })
   getUser(): string {
     return `${this.userService.getHello()} from user`;
   }
 
   @Get('/admin')
-  @Roles({ roles: ['ADMIN'] })
+  @Roles({ roles: ['realm:ADMIN'] })
   getAdmin(): string {
     return `${this.userService.getHello()} from admin`;
   }
 
   @Get('/all')
-  @Roles({ roles: ['ADMIN', 'USER'] })
   getAll(): string {
     return `${this.userService.getHello()} from all`;
   }
