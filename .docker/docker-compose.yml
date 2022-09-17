@@ -13,7 +13,7 @@ services:
     networks:
       - nestcafe
   keycloak:
-    image: quay.io/keycloak/keycloak:19.0.1
+    image: quay.io/keycloak/keycloak:19.0.2
     container_name: nestcafe-keycloak
     environment:
       KEYCLOAK_ADMIN: admin
@@ -41,7 +41,7 @@ services:
       - nestcafe
   traefik:
     container_name: nestcafe-traefik
-    image: traefik:v2.8.3
+    image: traefik:v2.8.5
     hostname: "traefik"
     environment:
       TZ: Europe/Paris
