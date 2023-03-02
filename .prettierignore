@@ -1,0 +1,7 @@
+package*.json
+dist
+node_modules
+.docker
+.vscode
+.gitlab-ci.yml
+.env.sample
